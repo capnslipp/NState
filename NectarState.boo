@@ -14,14 +14,14 @@ class NectarState:
 	def constructor(name as string):
 		_name = name
 	
-	def constructor(name as string, entry as NectarEvent, exit as NectarEvent):
+	def constructor(name as string, entryAction as NectarEvent, exitAction as NectarEvent):
 		self(name) # call the basic constructor
 		
-		self.entry = entry
-		self.exit = exit
+		self.entryAction = entryAction
+		self.exitAction = exitAction
 	
 	
-	public entry as NectarEvent
+	public entryAction as NectarEvent
 	
-	public exit as NectarEvent
+	public exitAction as NectarEvent
 	
