@@ -2,19 +2,19 @@
 
 
 
-class NectarStateTest (UUnitTestCase):
-	testCaseEvent as NectarEvent
+class NStateTest (UUnitTestCase):
+	testCaseEvent as NEventAction
 	
 	
 	def SetUp():
-		testCaseEvent = NectarEvent( NectarTestNote(value: 7) )
+		testCaseEvent = NEventAction( NStateTestEvent(value: 7) )
 	
 	
 	[UUnitTest]
 	def TestStateCreation():
-		aState = NectarState('BlahA')
+		aState = NState('BlahA')
 		UUnitAssert.EqualString('BlahA', aState.name, "")
 		
-		bState = NectarState('BlahB', testCaseEvent, testCaseEvent)
+		bState = NState('BlahB', testCaseEvent, testCaseEvent)
 		UUnitAssert.EqualString('BlahB', bState.name, "")
 		

@@ -6,13 +6,13 @@
 #import UnityEngine
 
 
-class NectarStateTransition:
+class NStateTransition:
 	[Getter(name)]
 	_name as string
 	
-	public target as NectarState
+	public target as NState
 	
-	public action as NectarEvent
+	public action as NEventAction
 	
 	
 	def constructor(name as string):

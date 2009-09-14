@@ -1,11 +1,10 @@
 import UnityEngine
 
-class NectarTestCaseRunner (MonoBehaviour):
+class NStateTestCaseRunner (MonoBehaviour):
 	def Start():
 		suite = UUnitTestSuite()
 		
-		suite.AddAll( NectarEventTest() )
-		suite.AddAll( NectarStateTest() )
+		suite.AddAll( NStateTest() )
 		
 		
 		result = suite.Run(null)

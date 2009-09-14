@@ -6,7 +6,7 @@
 #import UnityEngine
 
 
-class NectarState:
+class NState:
 	[Getter(name)]
 	_name as string
 	
@@ -14,14 +14,14 @@ class NectarState:
 	def constructor(name as string):
 		_name = name
 	
-	def constructor(name as string, entryAction as NectarEvent, exitAction as NectarEvent):
+	def constructor(name as string, entryAction as NEventAction, exitAction as NEventAction):
 		self(name) # call the basic constructor
 		
 		self.entryAction = entryAction
 		self.exitAction = exitAction
 	
 	
-	public entryAction as NectarEvent
+	public entryAction as NEventAction
 	
-	public exitAction as NectarEvent
+	public exitAction as NEventAction
 	
