@@ -9,13 +9,10 @@ import UnityEngine
 
 
 class NStateTransition (ScriptableObject):
-	[Getter(name)]
-	_name as string
-	
 	public target as NState
 	
 	public action as NEventAction
 	
 	
-	def constructor(name as string):
-		_name = name
+	def constructor(transitionName as string):
+		name = transitionName

@@ -9,12 +9,8 @@ import UnityEngine
 
 
 class NStateMap (ScriptableObject):
-	[Getter(name)]
-	_name as string
-	
-	
-	def constructor(name as string):
-		_name = name
+	def constructor(mapName as string):
+		name = mapName
 	
 	
 	_states as Hash
