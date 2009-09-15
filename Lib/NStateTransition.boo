@@ -3,10 +3,10 @@
 ## @purpose	Provides …
 
 
-#import UnityEngine
+import UnityEngine
 
 
-class NStateTransition:
+class NStateTransition (ScriptableObject):
 	[Getter(name)]
 	_name as string
 	

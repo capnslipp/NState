@@ -3,10 +3,10 @@
 ## @purpose	Provides …
 
 
-#import UnityEngine
+import UnityEngine
 
 
-class NStateMap:
+class NStateMap (ScriptableObject):
 	[Getter(name)]
 	_name as string
 	
