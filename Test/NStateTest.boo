@@ -7,7 +7,7 @@ class NStateTest (UUnitTestCase):
 	
 	
 	def SetUp():
-		testCaseEvent = NEventAction( NStateTestEvent(value: 7) )
+		testCaseEvent = NEventAction(NStateTestEvent)
 	
 	
 	[UUnitTest]
