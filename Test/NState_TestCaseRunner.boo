@@ -1,6 +1,10 @@
 import UnityEngine
 
 class NState_TestCaseRunner (MonoBehaviour):
+	def Awake():
+		Camera.main.backgroundColor = Color.green
+	
+	
 	def Start():
 		suite = UUnitTestSuite()
 		
