@@ -2,12 +2,12 @@
 
 
 
-class NStateTest (UUnitTestCase):
+class NState_TestCase (UUnitTestCase):
 	testCaseEvent as NEventAction
 	
 	
 	def SetUp():
-		testCaseEvent = NEventAction(NStateTestEvent)
+		testCaseEvent = NEventAction(NState_TestEvent)
 	
 	
 	[UUnitTest]

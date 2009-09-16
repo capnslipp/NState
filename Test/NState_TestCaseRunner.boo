@@ -1,10 +1,10 @@
 import UnityEngine
 
-class NStateTestCaseRunner (MonoBehaviour):
+class NState_TestCaseRunner (MonoBehaviour):
 	def Start():
 		suite = UUnitTestSuite()
 		
-		suite.AddAll( NStateTest() )
+		suite.AddAll( NState_TestCase() )
 		
 		
 		result = suite.Run(null)
