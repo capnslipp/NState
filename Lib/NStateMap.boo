@@ -13,8 +13,8 @@ class NStateMap (ScriptableObject):
 		name = mapName
 	
 	
-	_states as Hash
-	_transitions as Hash
+	_states as Hash = {}
+	_transitions as Hash = {}
 	
 	
 	def GetStateNames() as (string):
