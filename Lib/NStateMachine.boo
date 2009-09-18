@@ -11,7 +11,12 @@ import UnityEngine
 [RequireComponent(NEventSocket)]
 [RequireComponent(NEventPlug)]
 class NStateMachine (MonoBehaviour):
+	# map
+	
 	public map as NStateMap
+	
+	
+	# states/transitions
 	
 	public initialState as string
 	
@@ -20,15 +25,15 @@ class NStateMachine (MonoBehaviour):
 		get:
 			return _currentState.name
 	
+	_currentStateTransitions as (NStateTransition)
+	
+	
+	# event socket/plug
 	
 	_eventSocket as NEventSocket
 	
 	[Getter(eventPlug)]
 	_eventPlug as NEventPlug
-	
-	# only has data during the NTrigger check in the Update (null otherwise)
-	[Getter(activeEvents)]
-	_activeEvents as (NEventBase) = null
 	
 	
 	def Awake():
@@ -37,18 +42,55 @@ class NStateMachine (MonoBehaviour):
 		
 		_eventPlug = GetComponent(NEventPlug)
 		assert _eventPlug is not null
-		assert not _eventPlug.enabled, "The NEventPlug will be updated by this NStateMachine, therefore it must be enabled to prevent normal Update() calls."
-	
+		_eventPlug.enabled = false
 	
 	def Start():
-		_currentState = map.GetState(initialState)
+		# make sure the NEventPlug wasn't re-enabled
+		assert not _eventPlug.enabled, "The NEventPlug will be updated by this NStateMachine, therefore it must be disabled to prevent normal Update() calls."
+		
+		# make sure the NEventPlug wasn't re-enabled
+		assert map is not null, "\"map\" was null; an instance of a NStateMap is required by this NStateMachine."
+		
+		state as NState = map.GetState(initialState)
+		assert state is not null, "Could not find state \"${initialState}\" in the state map."
+		LoadState(state)
 	
+	
+	## only has data during the NTrigger check in the Update (null otherwise)
+	[Getter(activeEvents)]
+	_activeEvents as (NEventBase) = null
 	
 	def Update():
 		_activeEvents = _eventSocket.Flush()
 		
-		# @todo: loop through the transitions and ask each one if it's conditions have been met
+		# loop through the transitions and ask each one if it's conditions have been met
+		for transition as NStateTransition in _currentStateTransitions:
+			if transition.trigger.IsMet(self):
+				DoTransition(transition)
+				break
 		
 		_activeEvents = null
 		
 		_eventPlug.SendEvents()
+	
+	
+	
+	private def LoadState([Required(state is not null)] state as NState) as void:
+		_currentState = state
+		_currentStateTransitions = map.GetTransitionsForState(_currentState.name)
+	
+	private def EnterCurrentState() as void:
+		if _currentState.entryAction is not null:
+			_currentState.entryAction.Send(gameObject)
+	
+	private def ExitCurrentState() as void:
+		if _currentState.exitAction is not null:
+			_currentState.exitAction.Send(gameObject)
+	
+	
+	private def DoTransition([Required(transition is not null)] transition as NStateTransition) as void:
+		transition.action.Send(gameObject)
+		
+		ExitCurrentState()
+		LoadState(transition.targetState)
+		EnterCurrentState()

@@ -53,14 +53,17 @@ class NStateMap (ScriptableObject):
 		return false
 	
 	def GetTransitionForState(stateName as string, transitionName as string) as NStateTransition:
-		assert HasState(stateName)
-		node as Node = GetNodeForState(stateName)
-		
-		for transition as NStateTransition in node.transitions:
+		for transition as NStateTransition in GetTransitionsForState(stateName):
 			if transition.name == transitionName:
 				return transition
 		
 		return null
+	
+	def GetTransitionsForState(stateName as string) as (NStateTransition):
+		assert HasState(stateName)
+		node as Node = GetNodeForState(stateName)
+		
+		return node.transitions
 	
 	def AddTransition(fromStateName as string, transitionNameToAdd as string) as NStateTransition:
 		transition = ScriptableObject.CreateInstance('NStateTransition')
