@@ -9,17 +9,5 @@ import UnityEngine
 
 
 class NState (ScriptableObject):
-	def constructor(stateName as string):
-		name = stateName
-	
-	def constructor(stateName as string, entryAction as NEventAction, exitAction as NEventAction):
-		self(stateName) # call the basic constructor
-		
-		self.entryAction = entryAction
-		self.exitAction = exitAction
-	
-	
 	public entryAction as NEventAction
-	
 	public exitAction as NEventAction
-	
