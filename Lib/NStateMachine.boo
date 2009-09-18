@@ -22,7 +22,13 @@ class NStateMachine (MonoBehaviour):
 	
 	
 	_eventSocket as NEventSocket
+	
+	[Getter(eventPlug)]
 	_eventPlug as NEventPlug
+	
+	# only has data during the NTrigger check in the Update (null otherwise)
+	[Getter(activeEvents)]
+	_activeEvents as (NEventBase) = null
 	
 	
 	def Awake():
@@ -39,6 +45,10 @@ class NStateMachine (MonoBehaviour):
 	
 	
 	def Update():
+		_activeEvents = _eventSocket.Flush()
 		
+		# @todo: loop through the transitions and ask each one if it's conditions have been met
+		
+		_activeEvents = null
 		
 		_eventPlug.SendEvents()
