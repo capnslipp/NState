@@ -12,9 +12,9 @@ class NState_TestCase (UUnitTestCase):
 	
 	[UUnitTest]
 	def TestStateCreation():
-		aState = NState('BlahA')
+		aState = NState(name: 'BlahA')
 		UUnitAssert.EqualString('BlahA', aState.name, "")
 		
-		bState = NState('BlahB', testCaseEvent, testCaseEvent)
+		bState = NState(name: 'BlahB', entryAction: testCaseEvent, exitAction: testCaseEvent)
 		UUnitAssert.EqualString('BlahB', bState.name, "")
 		
