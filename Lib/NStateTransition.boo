@@ -9,5 +9,7 @@ import UnityEngine
 
 
 class NStateTransition (ScriptableObject):
+	public trigger as NTriggerBase
+	
 	public target as NState
 	public action as NEventAction
