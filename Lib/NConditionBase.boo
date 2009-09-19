@@ -8,6 +8,6 @@
 #import UnityEngine
 
 
-abstract class NTriggerBase (UnityEngine.ScriptableObject):
+abstract class NConditionBase (UnityEngine.ScriptableObject):
 	abstract def IsMet(stateMachine as NStateMachine) as bool:
 		pass

@@ -8,10 +8,10 @@ import System
 #import UnityEngine
 
 
-class NCallbackTrigger (NTriggerBase):
-	private callable TriggerCallable(stateMachine as NStateMachine) as bool
+class NCallbackCondition (NConditionBase):
+	private callable ConditionCallable(stateMachine as NStateMachine) as bool
 	
-	public callback as TriggerCallable
+	public callback as ConditionCallable
 	
 	
 	def IsMet(stateMachine as NStateMachine) as bool:

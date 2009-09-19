@@ -8,13 +8,13 @@ import System
 #import UnityEngine
 
 
-class NEventTrigger (NTriggerBase):
-	public triggerEvent as Type
+class NEventCondition (NConditionBase):
+	public conditionEvent as Type
 	
 	
 	def IsMet(stateMachine as NStateMachine) as bool:
 		for anEvent as NEventBase in stateMachine.activeEvents:
-			if anEvent.GetType() == triggerEvent:
+			if anEvent.GetType() == conditionEvent:
 				return true
 		
 		return false

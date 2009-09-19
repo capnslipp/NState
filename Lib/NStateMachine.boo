@@ -56,7 +56,7 @@ class NStateMachine (MonoBehaviour):
 		LoadState(state)
 	
 	
-	## only has data during the NTrigger check in the Update (null otherwise)
+	## only has data during the NCondition check in the Update (null otherwise)
 	[Getter(activeEvents)]
 	_activeEvents as (NEventBase) = null
 	
@@ -65,7 +65,7 @@ class NStateMachine (MonoBehaviour):
 		
 		# loop through the transitions and ask each one if it's conditions have been met
 		for transition as NStateTransition in _currentStateTransitions:
-			if transition.trigger.IsMet(self):
+			if transition.condition.IsMet(self):
 				DoTransition(transition)
 				break
 		
