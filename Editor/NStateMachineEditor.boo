@@ -18,6 +18,7 @@ class NStateMachineEditor (Editor):
 	#static final kPropertyBindingFlags as BindingFlags = BindingFlags.Public | BindingFlags.Instance
 	
 	static final kLabelStyle as GUIStyle
+	static final kIndentStyle as GUIStyle
 	
 	static def constructor():
 		kLabelStyle = GUIStyle(
@@ -26,6 +27,10 @@ class NStateMachineEditor (Editor):
 			alignment: TextAnchor.MiddleLeft,
 			fixedWidth: 150,
 			stretchWidth: false
+		)
+		kIndentStyle = GUIStyle(
+			margin: RectOffset(left: 17),
+			padding: RectOffset()
 		)
 	
 	
@@ -78,7 +83,8 @@ class NStateMachineEditor (Editor):
 			transitions as (NStateTransition) = stateNode.transitions
 			if LayOutTransitions(state, transitions):
 				#listHasBeenModified = true
-				stateNode.transitions = transitions
+				#stateNode.transitions = transitions
+				pass
 			
 			
 			EditorGUILayout.Separator()
@@ -202,10 +208,13 @@ class NStateMachineEditor (Editor):
 	private def LayOutTransitions(forState as NState, elements as (NStateTransition)) as bool:
 		didChange as bool = false
 		
+		EditorGUILayout.BeginVertical(kIndentStyle) # indent group
+		
+		
 		EditorGUILayout.BeginHorizontal()
 		
-		EditorGUILayout.Foldout(true, 'Transitions')
-		#GUILayout.Label('Transitions', kLabelStyle)
+		#EditorGUILayout.Foldout(true, 'Transitions')
+		GUILayout.Label('Transitions')
 		
 		EditorGUILayout.EndHorizontal()
 		
@@ -219,6 +228,9 @@ class NStateMachineEditor (Editor):
 		
 		for element as NStateTransition in elements:
 			element = LayOutTransitionElement(element)
+		
+		
+		EditorGUILayout.EndVertical() # indent group
 		
 		return didChange
 	
@@ -276,15 +288,23 @@ class NStateMachineEditor (Editor):
 		EditorGUILayout.EndHorizontal()
 		
 		
-		## entry action
-		#
-		#EditorGUILayout.BeginHorizontal()
-		#GUILayout.Label('Entry Action', kLabelStyle)
-		#NEditorGUILayout.AutoField(element.entryAction)
-		#EditorGUILayout.EndHorizontal()
+		# condition
+		
+		EditorGUILayout.BeginHorizontal()
+		GUILayout.Label('Condition', kLabelStyle)
+		NEditorGUILayout.AutoField(element.condition)
+		EditorGUILayout.EndHorizontal()
 		
 		
-		# exit action
+		# target state
+		
+		EditorGUILayout.BeginHorizontal()
+		GUILayout.Label('Target State', kLabelStyle)
+		NEditorGUILayout.AutoField(element.targetState)
+		EditorGUILayout.EndHorizontal()
+		
+		
+		# action
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Action', kLabelStyle)
