@@ -269,7 +269,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Condition', kLabelStyle)
-		NEventEditorGUILayout.AutoField(element.condition, NConditionBase)
+		element.condition = NStateEditorGUILayout.ConditionField(element.condition)
 		EditorGUILayout.EndHorizontal()
 		
 		
