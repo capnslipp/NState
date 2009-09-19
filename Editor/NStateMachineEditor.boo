@@ -65,7 +65,7 @@ class NStateMachineEditor (Editor):
 		
 		
 		# initial state field
-		resultInitialState = InitialStateField(target.initialState)
+		resultInitialState as string = StateWidget('Initial State', target.initialState)
 		if resultInitialState != target.initialState:
 			target.initialState = resultInitialState
 		
@@ -114,6 +114,30 @@ class NStateMachineEditor (Editor):
 		_map = null
 	
 	
+	private def StateWidget(label as string, stateName as string) as string:
+		EditorGUILayout.BeginHorizontal()
+		
+		GUILayout.Label(label, kLabelStyle)
+		
+		stateNames as (string) = GetStateNames()
+		
+		selectionIndex as int = Array.FindIndex(
+			stateNames,
+			{ n as string | n == stateName }
+		)
+		newSelectionIndex as int = EditorGUILayout.Popup(
+			selectionIndex,
+			GetStateNames()
+		)
+		
+		EditorGUILayout.EndHorizontal()
+		
+		if newSelectionIndex < 0:
+			return null
+		else:
+			return stateNames[newSelectionIndex]
+	
+	
 	private def LayOutCreateStateWidget() as void:
 		EditorGUILayout.BeginHorizontal()
 		
@@ -128,30 +152,6 @@ class NStateMachineEditor (Editor):
 				_stateCreateName = ''
 		
 		EditorGUILayout.EndHorizontal()
-	
-	
-	private def InitialStateField(initialStateName as string) as string:
-		EditorGUILayout.BeginHorizontal()
-		
-		GUILayout.Label('Initial State', kLabelStyle)
-		
-		stateNames as (string) = GetStateNames()
-		
-		selectionIndex as int = Array.FindIndex(
-			stateNames,
-			{ n as string | n == initialStateName }
-		)
-		newSelectionIndex as int = EditorGUILayout.Popup(
-			selectionIndex,
-			GetStateNames()
-		)
-		
-		EditorGUILayout.EndHorizontal()
-		
-		if newSelectionIndex < 0:
-			return null
-		else:
-			return stateNames[newSelectionIndex]
 	
 	
 	private def LayOutStateElement(element as NState) as void:
@@ -279,8 +279,11 @@ class NStateMachineEditor (Editor):
 		# target state
 		
 		EditorGUILayout.BeginHorizontal()
-		GUILayout.Label('Target State', kLabelStyle)
-		NEditorGUILayout.AutoField(element.targetState)
+		targetStateName as string
+		targetStateName = element.targetState.name if element.targetState is not null
+		resultTargetStateName as string = StateWidget('Target State', targetStateName)
+		if resultTargetStateName != targetStateName:
+			element.targetState = _map.GetState(resultTargetStateName)
 		EditorGUILayout.EndHorizontal()
 		
 		
