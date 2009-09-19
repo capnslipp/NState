@@ -5,10 +5,13 @@
 
 import System
 #import System.Reflection
-import UnityEngine
+#import UnityEngine
 
 
-class NStateTransition (ScriptableObject):
+[Serializable]
+class NStateTransition:
+	public name as string
+	
 	public condition as NConditionBase
 	
 	public targetState as NState

@@ -11,5 +11,6 @@ import System
 [Serializable]
 class NState:
 	public name as string
+	
 	public entryAction as NEventAction
 	public exitAction as NEventAction
