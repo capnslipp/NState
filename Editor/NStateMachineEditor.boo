@@ -50,12 +50,13 @@ class NStateMachineEditor (Editor):
 		
 		# element fields
 		for stateNode as NStateMap.Node in target.map.nodes:
+			state as NState = stateNode.state
 			#EditorGUILayout.Separator()
-			resultElement = LayOutStateElement(stateNode.state)
+			resultElement = LayOutStateElement(state)
 			EditorGUILayout.Separator()
-			if resultElement is not stateNode.state:
+			if resultElement is not null and resultElement is not state:
 				#listHasBeenModified = true
-				stateNode.state = resultElement
+				state = resultElement # this actually won't do anything if the resultElement is a different type (i.e null)
 		
 		
 		# clean up: destory objects that were marked to be removed
