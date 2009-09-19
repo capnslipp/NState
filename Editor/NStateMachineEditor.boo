@@ -52,11 +52,6 @@ class NStateMachineEditor (Editor):
 		_map = target.map
 		
 		
-		#targetElementList as List = List(target.abilities as (NAbilityBase))
-		#listHasBeenModified as bool = false
-		#needsSort as bool = false
-		
-		
 		# create field
 		LayOutCreateStateWidget()
 		
@@ -97,15 +92,6 @@ class NStateMachineEditor (Editor):
 				target.map.RemoveTransition(removeStateElement.forState.name, removeStateElement.transition.name)
 			
 			_stateTransitionElementsToRemove = array(StateTransitionRemovalData, 0)
-		
-		
-		
-		#if listHasBeenModified:
-		#	if needsSort:
-		#		targetElementList.Sort(TypeNameSortComparer())
-		#	
-		#	# send the array back
-		#	target.abilities = array(NAbilityBase, targetElementList)
 		
 		
 		_map = null
