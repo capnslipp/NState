@@ -188,7 +188,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Entry Action', kLabelStyle)
-		element.entryAction = NEditorGUILayout.EventActionField(element.entryAction)
+		element.entryAction = NEventEditorGUILayout.EventActionField(element.entryAction)
 		EditorGUILayout.EndHorizontal()
 		
 		
@@ -196,7 +196,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Exit Action', kLabelStyle)
-		element.exitAction = NEditorGUILayout.EventActionField(element.exitAction)
+		element.exitAction = NEventEditorGUILayout.EventActionField(element.exitAction)
 		EditorGUILayout.EndHorizontal()
 	
 	
@@ -272,7 +272,15 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Condition', kLabelStyle)
-		NEditorGUILayout.AutoField(element.condition, NConditionBase)
+		NEventEditorGUILayout.AutoField(element.condition, NConditionBase)
+		EditorGUILayout.EndHorizontal()
+		
+		
+		# action
+		
+		EditorGUILayout.BeginHorizontal()
+		GUILayout.Label('Action', kLabelStyle)
+		element.action = NEventEditorGUILayout.EventActionField(element.action)
 		EditorGUILayout.EndHorizontal()
 		
 		
@@ -284,14 +292,6 @@ class NStateMachineEditor (Editor):
 		resultTargetStateName as string = StateWidget('Target State', targetStateName)
 		if resultTargetStateName != targetStateName:
 			element.targetState = _map.GetState(resultTargetStateName)
-		EditorGUILayout.EndHorizontal()
-		
-		
-		# action
-		
-		EditorGUILayout.BeginHorizontal()
-		GUILayout.Label('Action', kLabelStyle)
-		element.action = NEditorGUILayout.EventActionField(element.action)
 		EditorGUILayout.EndHorizontal()
 	
 	
