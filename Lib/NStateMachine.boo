@@ -31,32 +31,23 @@ class NStateMachine (MonoBehaviour):
 	
 	# event socket/plug
 	
-	#_eventSocket as NEventSocket
+	_eventSocket as NEventSocket
 	
-	#[Getter(eventPlug)]
-	#_eventPlug as NEventPlug
-	eventPlug as NEventPlug:
-		get:
-			return GetComponent(NEventPlug)
+	[Getter(eventPlug)]
+	_eventPlug as NEventPlug
 	
 	
 	def Awake():
-		#_eventSocket = GetComponent(NEventSocket)
-		#assert _eventSocket is not null
-		#
-		#_eventPlug = GetComponent(NEventPlug)
-		#assert _eventPlug is not null
-		#_eventPlug.enabled = false
-		eventPlug.enabled = false
+		_eventSocket = GetComponent(NEventSocket)
+		assert _eventSocket is not null
+		
+		_eventPlug = GetComponent(NEventPlug)
+		assert _eventPlug is not null
+		_eventPlug.enabled = false
 	
 	# called on start-up, so we don't want to "reset" everything, we just want to init anything that's not inited
 	def Reset():
 		pass
-		#if map is not null:
-		#	Debug.LogWarning("NStateMachine #${self.GetInstanceID()} Resetting, destroying NStateMap #${map.GetInstanceID()}")
-		#	ScriptableObject.DestroyImmediate(map)
-		#else:
-		#	Debug.LogWarning("NStateMachine #${self.GetInstanceID()} Resetting")
 	
 	def Start():
 		# make sure the NEventPlug wasn't re-enabled
@@ -76,7 +67,7 @@ class NStateMachine (MonoBehaviour):
 	_activeEvents as (NEventBase) = null
 	
 	def Update():
-		_activeEvents = GetComponent(NEventSocket).Flush()
+		_activeEvents = _eventSocket.Flush()
 		
 		# loop through the transitions and ask each one if it's conditions have been met
 		for transition as NStateTransition in _currentStateTransitions:
