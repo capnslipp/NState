@@ -14,5 +14,6 @@ class NStateTransition:
 	
 	public condition as NConditionBase
 	
-	public targetState as NState
 	public action as NEventAction
+	
+	public targetState as NState
