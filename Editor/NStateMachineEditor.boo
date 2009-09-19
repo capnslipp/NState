@@ -97,7 +97,40 @@ class NStateMachineEditor (Editor):
 		_map = null
 	
 	
+	
 	private def StateWidget(label as string, stateName as string) as string:
+		return StateWidget(label, stateName, false)
+	
+	private def StateWidget(label as string, stateName as string, allowNone as bool) as string:
+		if allowNone:
+			return StateWidgetWithNone(label, stateName)
+		else:
+			return StateWidgetWithoutNone(label, stateName)
+	
+	private def StateWidgetWithNone(label as string, stateName as string) as string:
+		EditorGUILayout.BeginHorizontal()
+		
+		GUILayout.Label(label, kLabelStyle)
+		
+		stateNames as (string) = GetStateNames()
+		
+		selectionIndex as int = Array.FindIndex(
+			stateNames,
+			{ n as string | n == stateName }
+		)
+		newSelectionIndex as int = EditorGUILayout.Popup(
+			selectionIndex + 1,
+			('None',) + GetStateNames()
+		) - 1
+		
+		EditorGUILayout.EndHorizontal()
+		
+		if newSelectionIndex < 0:
+			return null
+		else:
+			return stateNames[newSelectionIndex]
+	
+	private def StateWidgetWithoutNone(label as string, stateName as string) as string:
 		EditorGUILayout.BeginHorizontal()
 		
 		GUILayout.Label(label, kLabelStyle)
@@ -115,10 +148,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.EndHorizontal()
 		
-		if newSelectionIndex < 0:
-			return null
-		else:
-			return stateNames[newSelectionIndex]
+		return stateNames[newSelectionIndex]
 	
 	
 	private def LayOutCreateStateWidget() as void:
@@ -272,8 +302,8 @@ class NStateMachineEditor (Editor):
 		EditorGUILayout.BeginHorizontal()
 		targetStateName as string
 		targetStateName = element.targetState.name if element.targetState is not null
-		resultTargetStateName as string = StateWidget('Target State', targetStateName)
 		if resultTargetStateName != targetStateName:
+		resultTargetStateName as string = StateWidget('Target State', targetStateName, true)
 			element.targetState = _map.GetState(resultTargetStateName)
 		EditorGUILayout.EndHorizontal()
 	
