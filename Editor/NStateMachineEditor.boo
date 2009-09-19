@@ -4,7 +4,7 @@
 
 
 import System
-import System.Collections
+#import System.Collections
 import System.Reflection
 import UnityEditor
 import UnityEngine
@@ -30,32 +30,38 @@ class NStateMachineEditor (Editor):
 	
 	
 	_stateElementsToRemove as (NState) = array(NState, 0)
-	_stateCreateName as string = ""
+	_stateCreateName as string = ''
+	
+	
+	# only valid during OnInspectorGUI(); null otherwise
+	_map as NStateMap = null
 	
 	
 	def OnInspectorGUI():
+		return if target.map is null
+		_map = target.map
+		
+		
 		#targetElementList as List = List(target.abilities as (NAbilityBase))
 		#listHasBeenModified as bool = false
 		#needsSort as bool = false
 		
-		return if target.map is null
-		
 		
 		# create field
-		if LayOutCreateWidget(target.map):
+		if LayOutCreateWidget():
 			pass
 			#needsSort = true
 			#listHasBeenModified = true
 		
 		
 		# initial state field
-		resultInitialState = LayOutInitialStateWidget(target.initialState, target.map)
+		resultInitialState = LayOutInitialStateWidget(target.initialState)
 		if resultInitialState != target.initialState:
 			target.initialState = resultInitialState
 		
 		
 		# element fields
-		for stateNode as NStateMap.Node in target.map.nodes:
+		for stateNode as NStateMap.Node in _map.nodes:
 			state as NState = stateNode.state
 			
 			resultElement as NState = LayOutStateElement(state)
@@ -80,6 +86,9 @@ class NStateMachineEditor (Editor):
 		#	
 		#	# send the array back
 		#	target.abilities = array(NAbilityBase, targetElementList)
+		
+		
+		_map = null
 	
 	
 	private def LayOutStateElement(element as NState) as NState:
@@ -96,11 +105,44 @@ class NStateMachineEditor (Editor):
 			_stateElementsToRemove += (element,)
 			return null
 		else:
-			#element = LayOutElementFields(element)
+			element = LayOutStateElementFields(element)
 			return element
 	
 	
-	#private def LayOutElementFields(element as NAbilityBase) as NAbilityBase:
+	private def LayOutStateElementFields(element as NState) as NState:
+		# name
+		
+		EditorGUILayout.BeginHorizontal()
+		
+		GUILayout.Label('Name', kLabelStyle)
+		
+		resultElementName as string = EditorGUILayout.TextField(element.name)
+		if StateNameIsValid(resultElementName, element.name):
+			element.name = resultElementName
+		
+		EditorGUILayout.EndHorizontal()
+		
+		
+		# entry action
+		
+		EditorGUILayout.BeginHorizontal()
+		GUILayout.Label('Entry Action', kLabelStyle)
+		NEditorGUILayout.AutoField(element.entryAction)
+		EditorGUILayout.EndHorizontal()
+		
+		
+		# exit action
+		
+		EditorGUILayout.BeginHorizontal()
+		GUILayout.Label('Exit Action', kLabelStyle)
+		NEditorGUILayout.AutoField(element.exitAction)
+		EditorGUILayout.EndHorizontal()
+		
+		
+		return element
+	
+	
+	#private def LayOutTransitionElementFields(element as NAbilityBase) as NAbilityBase:
 	#	origValue as object
 	#	resultValue as object
 	#	
@@ -122,46 +164,10 @@ class NStateMachineEditor (Editor):
 	#		
 	#		EditorGUILayout.EndHorizontal()
 	#	
-	#	# private fields get set back to 0 when the game starts (probably a Unity thing)
-	#	#privElementFields as (FieldInfo) = element.GetType().GetFields(kPrivFieldBindingFlags)
-	#	#for field as FieldInfo in privElementFields:
-	#	#	if typeof(NReactionBase).GetField(field.Name, kPubAndPrivFieldBindingFlags):
-	#	#		continue
-	#	#	
-	#	#	EditorGUILayout.BeginHorizontal()
-	#	#	GUILayout.Label("(initial) ${ObjectNames.NicifyVariableName(field.Name)}", kLabelStyle)
-	#	#	
-	#	#	origValue = field.GetValue(element)
-	#	#	resultValue = NEditorGUILayout.AutoField(origValue)
-	#	#	#if resultValue.GetType() == field.GetType():
-	#	#	try:
-	#	#		field.SetValue(element, resultValue)
-	#	#	except e as Exception:
-	#	#		pass
-	#	#	
-	#	#	EditorGUILayout.EndHorizontal()
-	#	
-	#	# setting properties cause all kind of problems since the property can trigger other stuff to happen
-	#	#elementProperties as (PropertyInfo) = element.GetType().GetProperties(kPropertyBindingFlags)
-	#	#for property as PropertyInfo in elementProperties:
-	#	#	if typeof(NAbilityBase).GetProperty(property.Name, kPropertyBindingFlags):
-	#	#		continue
-	#	#	
-	#	#	EditorGUILayout.BeginHorizontal()
-	#	#	EditorGUILayout.PrefixLabel(ObjectNames.NicifyVariableName(property.Name))
-	#	#	
-	#	#	origValue = property.GetValue(element, null)
-	#	#	resultValue = NEditorGUILayout.AutoField(origValue)
-	#	#	if resultValue.GetType() == origValue.GetType():
-	#	#		property.SetValue(element, resultValue, null)
-	#	#	
-	#	#	EditorGUILayout.EndHorizontal()
-	#	#	EditorGUILayout.Separator()
-	#	
 	#	return element
 	
 	
-	private def LayOutCreateWidget(map as NStateMap) as bool:
+	private def LayOutCreateWidget() as bool:
 		didCreate as bool
 		
 		EditorGUILayout.BeginHorizontal()
@@ -172,55 +178,56 @@ class NStateMachineEditor (Editor):
 		createPressed as bool = GUILayout.Button('Create State', GUILayout.Width(80))
 		
 		if createPressed:
-			if StateCreateNameIsValid(map):
-				map.AddState(_stateCreateName)
-				_stateCreateName = ""
+			if StateNameIsValid(_stateCreateName):
+				_map.AddState(_stateCreateName)
+				_stateCreateName = ''
 				didCreate = true
 		
 		EditorGUILayout.EndHorizontal()
 		
 		return didCreate
 	
-	private def StateCreateNameIsValid(map as NStateMap) as bool:
-		return not String.IsNullOrEmpty(_stateCreateName) and not map.HasState(_stateCreateName)
 	
-	
-	private def LayOutInitialStateWidget(initialStateName as string, map as NStateMap) as string:
+	private def LayOutInitialStateWidget(initialStateName as string) as string:
 		EditorGUILayout.BeginHorizontal()
 		
 		GUILayout.Label('Initial State', kLabelStyle)
 		
-		stateNames as (string) = GetStateNames(map)
+		stateNames as (string) = GetStateNames()
 		
 		selectionIndex as int = Array.FindIndex(
 			stateNames,
 			{ n as string | n == initialStateName }
 		)
-		newTypeIndex as int = EditorGUILayout.Popup(
+		newSelectionIndex as int = EditorGUILayout.Popup(
 			selectionIndex,
-			GetStateNames(map)
+			GetStateNames()
 		)
 		
 		EditorGUILayout.EndHorizontal()
 		
-		return stateNames[newTypeIndex]
+		if newSelectionIndex < 0:
+			return null
+		else:
+			return stateNames[newSelectionIndex]
 	
-	private def GetStateNames(map as NStateMap) as (string):
+	
+	
+	# utility
+	
+	
+	private def StateNameIsValid(stateName as string) as bool:
+		return not String.IsNullOrEmpty(stateName) and not _map.HasState(stateName)
+	
+	
+	private def StateNameIsValid(stateName as string, exceptName as string) as bool:
+		return stateName == exceptName or StateNameIsValid(stateName)
+	
+	
+	private def GetStateNames() as (string):
 		stateNames as (string) = array(string, 0)
 		
-		for stateNode as NStateMap.Node in map.nodes:
+		for stateNode as NStateMap.Node in _map.nodes:
 			stateNames += (stateNode.state.name,)
 		
 		return stateNames
-	
-	
-	class TypeNameSortComparer (IComparer):
-		def IComparer.Compare(early as object, late as object) as int:
-			if early.GetType() == late.GetType():
-				return (early as UnityEngine.Object).GetInstanceID().CompareTo(
-					(late as UnityEngine.Object).GetInstanceID()
-				)
-			else:
-				return early.GetType().Name.CompareTo(
-					late.GetType().Name
-				)
