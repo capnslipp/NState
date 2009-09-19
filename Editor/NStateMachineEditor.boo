@@ -48,12 +48,19 @@ class NStateMachineEditor (Editor):
 			#listHasBeenModified = true
 		
 		
+		# initial state field
+		resultInitialState = LayOutInitialStateWidget(target.initialState, target.map)
+		if resultInitialState != target.initialState:
+			target.initialState = resultInitialState
+		
+		
 		# element fields
 		for stateNode as NStateMap.Node in target.map.nodes:
 			state as NState = stateNode.state
-			#EditorGUILayout.Separator()
-			resultElement = LayOutStateElement(state)
+			
+			resultElement as NState = LayOutStateElement(state)
 			EditorGUILayout.Separator()
+			
 			if resultElement is not null and resultElement is not state:
 				#listHasBeenModified = true
 				state = resultElement # this actually won't do anything if the resultElement is a different type (i.e null)
@@ -176,6 +183,35 @@ class NStateMachineEditor (Editor):
 	
 	private def StateCreateNameIsValid(map as NStateMap) as bool:
 		return not String.IsNullOrEmpty(_stateCreateName) and not map.HasState(_stateCreateName)
+	
+	
+	private def LayOutInitialStateWidget(initialStateName as string, map as NStateMap) as string:
+		EditorGUILayout.BeginHorizontal()
+		
+		GUILayout.Label('Initial State', kLabelStyle)
+		
+		stateNames as (string) = GetStateNames(map)
+		
+		selectionIndex as int = Array.FindIndex(
+			stateNames,
+			{ n as string | n == initialStateName }
+		)
+		newTypeIndex as int = EditorGUILayout.Popup(
+			selectionIndex,
+			GetStateNames(map)
+		)
+		
+		EditorGUILayout.EndHorizontal()
+		
+		return stateNames[newTypeIndex]
+	
+	private def GetStateNames(map as NStateMap) as (string):
+		stateNames as (string) = array(string, 0)
+		
+		for stateNode as NStateMap.Node in map.nodes:
+			stateNames += (stateNode.state.name,)
+		
+		return stateNames
 	
 	
 	class TypeNameSortComparer (IComparer):
