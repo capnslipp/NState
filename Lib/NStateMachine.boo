@@ -100,5 +100,10 @@ class NStateMachine (MonoBehaviour):
 			transition.action.Send(gameObject)
 		
 		ExitCurrentState()
-		LoadState(transition.targetState)
-		EnterCurrentState()
+		
+		if transition.targetState is not null and not String.IsNullOrEmpty(transition.targetState.name):
+			LoadState(transition.targetState)
+			EnterCurrentState()
+		else:
+			# turn off the state machine; it's over!
+			enabled = false
