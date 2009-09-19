@@ -9,7 +9,7 @@ import System
 
 
 class NCallbackCondition (NConditionBase):
-	private callable ConditionCallable(stateMachine as NStateMachine) as bool
+	callable ConditionCallable(stateMachine as NStateMachine) as bool
 	
 	public callback as ConditionCallable
 	
