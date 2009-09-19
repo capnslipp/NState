@@ -44,6 +44,12 @@ class NStateMachine (MonoBehaviour):
 		assert _eventPlug is not null
 		_eventPlug.enabled = false
 	
+	def Reset():
+		if map is not null:
+			ScriptableObject.DestroyImmediate(map)
+		
+		map = ScriptableObject.CreateInstance(typeof(NStateMap).Name)
+	
 	def Start():
 		# make sure the NEventPlug wasn't re-enabled
 		assert not _eventPlug.enabled, "The NEventPlug will be updated by this NStateMachine, therefore it must be disabled to prevent normal Update() calls."
