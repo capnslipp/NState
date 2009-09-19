@@ -52,6 +52,12 @@ class NStateMachineEditor (Editor):
 		_map = target.map
 		
 		
+		EditorGUILayout.BeginHorizontal()
+		GUILayout.Label('Debug Output', kLabelStyle)
+		target.debugOutput = EditorGUILayout.Toggle(target.debugOutput)
+		EditorGUILayout.EndHorizontal()
+		
+		
 		# create field
 		LayOutCreateStateWidget()
 		

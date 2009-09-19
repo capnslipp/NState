@@ -11,6 +11,9 @@ import UnityEngine
 [RequireComponent(NEventSocket)]
 [RequireComponent(NEventPlug)]
 class NStateMachine (MonoBehaviour):
+	public debugOutput as bool = false
+	
+	
 	# map
 	
 	# must be public to be serialized
@@ -59,7 +62,9 @@ class NStateMachine (MonoBehaviour):
 		
 		state as NState = map.GetState(initialState)
 		assert state is not null, "Could not find initial state \"${initialState}\" in the state map."
+		
 		LoadState(state)
+		Debug.Log("NStateMachine #${self.GetInstanceID()} beginning on '${_currentState.name}' State", self) if debugOutput
 	
 	
 	## only has data during the NCondition check in the Update (null otherwise)
@@ -72,6 +77,7 @@ class NStateMachine (MonoBehaviour):
 		# loop through the transitions and ask each one if it's conditions have been met
 		for transition as NStateTransition in _currentStateTransitions:
 			assert transition.condition is not null, "Invalid condition for NStateTransition '${transition.name}' (for NState '${_currentState.name}')."
+			
 			if transition.condition.IsMet(self):
 				DoTransition(transition)
 				break
@@ -87,10 +93,14 @@ class NStateMachine (MonoBehaviour):
 		_currentStateTransitions = map.GetTransitions(_currentState.name)
 	
 	private def EnterCurrentState() as void:
+		Debug.Log("NStateMachine #${self.GetInstanceID()} entering '${_currentState.name}' State", self) if debugOutput
+		
 		if _currentState.entryAction is not null and _currentState.entryAction.eventType.type is not null:
 			_currentState.entryAction.Send(gameObject)
 	
 	private def ExitCurrentState() as void:
+		Debug.Log("NStateMachine #${self.GetInstanceID()} exiting '${_currentState.name}' State", self) if debugOutput
+		
 		if _currentState.exitAction is not null and _currentState.exitAction.eventType.type is not null:
 			_currentState.exitAction.Send(gameObject)
 	
@@ -107,3 +117,4 @@ class NStateMachine (MonoBehaviour):
 		else:
 			# turn off the state machine; it's over!
 			enabled = false
+			Debug.Log("NStateMachine #${self.GetInstanceID()} ending", self) if debugOutput
