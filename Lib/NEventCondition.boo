@@ -9,7 +9,7 @@ import System
 
 
 class NEventCondition (NConditionBase):
-	public conditionEvent as Type
+	public conditionEvent as SerializableDerivedType = SerializableDerivedType(NEventBase)
 	
 	
 	def IsMet(stateMachine as NStateMachine) as bool:
