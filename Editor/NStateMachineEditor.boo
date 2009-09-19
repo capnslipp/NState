@@ -29,12 +29,19 @@ class NStateMachineEditor (Editor):
 			stretchWidth: false
 		)
 		kIndentStyle = GUIStyle(
-			margin: RectOffset(left: 17),
+			margin: RectOffset(left: 35),
 			padding: RectOffset()
 		)
 	
 	
 	_stateElementsToRemove as (NState) = array(NState, 0)
+	
+	struct StateTransitionRemovalData:
+		forState as NState
+		transition as NStateTransition
+	_stateTransitionElementsToRemove as (StateTransitionRemovalData) = array(StateTransitionRemovalData, 0)
+	
+	
 	_stateCreateName as string = ''
 	_transitionCreateName as string = ''
 	
@@ -54,14 +61,11 @@ class NStateMachineEditor (Editor):
 		
 		
 		# create field
-		if LayOutCreateStateWidget():
-			pass
-			#needsSort = true
-			#listHasBeenModified = true
+		LayOutCreateStateWidget()
 		
 		
 		# initial state field
-		resultInitialState = LayOutInitialStateWidget(target.initialState)
+		resultInitialState = InitialStateField(target.initialState)
 		if resultInitialState != target.initialState:
 			target.initialState = resultInitialState
 		
@@ -71,31 +75,32 @@ class NStateMachineEditor (Editor):
 			# Node#state
 			
 			state as NState = stateNode.state
-			resultElement as NState = LayOutStateElement(state)
-			
-			if resultElement is not state:
-				#listHasBeenModified = true
-				state = resultElement # this actually won't do anything if the resultElement is a different type (i.e null)
+			LayOutStateElement(state)
 			
 			
 			# Node#transitions
 			
 			transitions as (NStateTransition) = stateNode.transitions
-			if LayOutTransitions(state, transitions):
-				#listHasBeenModified = true
-				#stateNode.transitions = transitions
-				pass
+			LayOutTransitions(state, transitions)
 			
 			
 			EditorGUILayout.Separator()
 		
 		
 		# clean up: destory objects that were marked to be removed
-		if _stateElementsToRemove.Length != 0:
+		
+		if _stateElementsToRemove.Length > 0:
 			for removeStateElement as NState in _stateElementsToRemove:
 				target.map.RemoveState(removeStateElement.name)
 			
 			_stateElementsToRemove = array(NState, 0)
+			
+		if _stateTransitionElementsToRemove.Length > 0:
+			for removeStateElement as StateTransitionRemovalData in _stateTransitionElementsToRemove:
+				target.map.RemoveTransition(removeStateElement.forState.name, removeStateElement.transition.name)
+			
+			_stateTransitionElementsToRemove = array(StateTransitionRemovalData, 0)
+		
 		
 		
 		#if listHasBeenModified:
@@ -109,9 +114,7 @@ class NStateMachineEditor (Editor):
 		_map = null
 	
 	
-	private def LayOutCreateStateWidget() as bool:
-		didCreate as bool
-		
+	private def LayOutCreateStateWidget() as void:
 		EditorGUILayout.BeginHorizontal()
 		
 		_stateCreateName = EditorGUILayout.TextField(_stateCreateName)
@@ -123,14 +126,11 @@ class NStateMachineEditor (Editor):
 			if StateNameIsValid(_stateCreateName):
 				_map.AddState(_stateCreateName)
 				_stateCreateName = ''
-				didCreate = true
 		
 		EditorGUILayout.EndHorizontal()
-		
-		return didCreate
 	
 	
-	private def LayOutInitialStateWidget(initialStateName as string) as string:
+	private def InitialStateField(initialStateName as string) as string:
 		EditorGUILayout.BeginHorizontal()
 		
 		GUILayout.Label('Initial State', kLabelStyle)
@@ -154,25 +154,23 @@ class NStateMachineEditor (Editor):
 			return stateNames[newSelectionIndex]
 	
 	
-	private def LayOutStateElement(element as NState) as NState:
+	private def LayOutStateElement(element as NState) as void:
 		EditorGUILayout.BeginHorizontal()
 		
 		EditorGUILayout.Foldout(true, "${element.name} State")
 		#GUILayout.Label(element.name)
 		
-		destroyPressed as bool = GUILayout.Button('Destory', GUILayout.Width(60))
+		destroyPressed as bool = GUILayout.Button('Destroy', GUILayout.Width(60))
 		
 		EditorGUILayout.EndHorizontal()
 		
 		if destroyPressed:
 			_stateElementsToRemove += (element,)
-			return null
 		else:
-			element = LayOutStateElementFields(element)
-			return element
+			LayOutStateElementFields(element)
 	
 	
-	private def LayOutStateElementFields(element as NState) as NState:
+	private def LayOutStateElementFields(element as NState) as void:
 		# name
 		
 		EditorGUILayout.BeginHorizontal()
@@ -200,44 +198,31 @@ class NStateMachineEditor (Editor):
 		GUILayout.Label('Exit Action', kLabelStyle)
 		NEditorGUILayout.AutoField(element.exitAction)
 		EditorGUILayout.EndHorizontal()
-		
-		
-		return element
 	
 	
-	private def LayOutTransitions(forState as NState, elements as (NStateTransition)) as bool:
-		didChange as bool = false
-		
-		EditorGUILayout.BeginVertical(kIndentStyle) # indent group
-		
-		
+	private def LayOutTransitions(forState as NState, elements as (NStateTransition)) as void:
 		EditorGUILayout.BeginHorizontal()
 		
 		#EditorGUILayout.Foldout(true, 'Transitions')
-		GUILayout.Label('Transitions')
+		GUILayout.Label('Transitions', kLabelStyle)
 		
 		EditorGUILayout.EndHorizontal()
 		
 		
+		EditorGUILayout.BeginVertical(kIndentStyle) # indent group
+		
 		# create field
-		if LayOutCreateTransitionWidget(forState):
-			didChange = true
-			#needsSort = true
-			#listHasBeenModified = true
+		LayOutCreateTransitionWidget(forState)
 		
 		
 		for element as NStateTransition in elements:
-			element = LayOutTransitionElement(element)
+			LayOutTransitionElement(forState, element)
 		
 		
 		EditorGUILayout.EndVertical() # indent group
-		
-		return didChange
 	
 	
-	private def LayOutCreateTransitionWidget(forState as NState) as bool:
-		didCreate as bool
-		
+	private def LayOutCreateTransitionWidget(forState as NState) as void:
 		EditorGUILayout.BeginHorizontal()
 		
 		_transitionCreateName = EditorGUILayout.TextField(_transitionCreateName)
@@ -249,32 +234,27 @@ class NStateMachineEditor (Editor):
 			if TransitionNameIsValid(_transitionCreateName):
 				_map.AddTransition(forState.name, _transitionCreateName)
 				_transitionCreateName = ''
-				didCreate = true
 		
 		EditorGUILayout.EndHorizontal()
-		
-		return didCreate
 	
 	
-	private def LayOutTransitionElement(element as NStateTransition) as NStateTransition:
+	private def LayOutTransitionElement(forState as NState, element as NStateTransition) as void:
 		EditorGUILayout.BeginHorizontal()
 		
-		EditorGUILayout.Foldout(true, "${element.name} Transition")
+		EditorGUILayout.Foldout(true, "Transition ${element.name}")
 		#GUILayout.Label(element.name)
 		
-		destroyPressed as bool = GUILayout.Button('Destory', GUILayout.Width(60))
+		destroyPressed as bool = GUILayout.Button('Destroy', GUILayout.Width(60))
 		
 		EditorGUILayout.EndHorizontal()
 		
 		if destroyPressed:
-			#_stateElementsToRemove += (element,)
-			return null
+			_stateTransitionElementsToRemove += (StateTransitionRemovalData(forState: forState, transition: element),)
 		else:
-			element = LayOutTransitionElementFields(element)
-			return element
+			LayOutTransitionElementFields(element)
 	
 	
-	private def LayOutTransitionElementFields(element as NStateTransition) as NStateTransition:
+	private def LayOutTransitionElementFields(element as NStateTransition) as void:
 		# name
 		
 		EditorGUILayout.BeginHorizontal()
@@ -310,9 +290,6 @@ class NStateMachineEditor (Editor):
 		GUILayout.Label('Action', kLabelStyle)
 		NEditorGUILayout.AutoField(element.action)
 		EditorGUILayout.EndHorizontal()
-		
-		
-		return element
 	
 	
 	
