@@ -13,7 +13,7 @@ class NStateMap:
 	[Serializable]
 	class Node:
 		public state as NState
-		public transitions as (NStateTransition)
+		public transitions as (NStateTransition) = array(NStateTransition, 0)
 	
 	# must be public to be serialized
 	public nodes as (Node) = array(Node, 0)
