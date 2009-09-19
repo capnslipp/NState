@@ -85,7 +85,7 @@ class NStateMachineEditor (Editor):
 	private def LayOutStateElement(element as NState) as NState:
 		EditorGUILayout.BeginHorizontal()
 		
-		EditorGUILayout.Foldout(true, element.name)
+		EditorGUILayout.Foldout(true, "${element.name} State")
 		#GUILayout.Label(element.name)
 		
 		destroyPressed as bool = GUILayout.Button('Destory', GUILayout.Width(60))
