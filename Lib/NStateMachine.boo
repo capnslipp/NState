@@ -96,7 +96,8 @@ class NStateMachine (MonoBehaviour):
 	
 	
 	private def DoTransition([Required(transition is not null)] transition as NStateTransition) as void:
-		transition.action.Send(gameObject)
+		if transition.action is not null and transition.action.eventType.type is not null:
+			transition.action.Send(gameObject)
 		
 		ExitCurrentState()
 		LoadState(transition.targetState)
