@@ -29,7 +29,7 @@ class NStateMachineEditor (Editor):
 		)
 	
 	
-	#_elementsToRemove as (NAbilityBase) = array(NAbilityBase, 0)
+	_stateElementsToRemove as (NState) = array(NState, 0)
 	_stateCreateName as string = ""
 	
 	
@@ -37,6 +37,8 @@ class NStateMachineEditor (Editor):
 		#targetElementList as List = List(target.abilities as (NAbilityBase))
 		#listHasBeenModified as bool = false
 		#needsSort as bool = false
+		
+		return if target.map is null
 		
 		
 		# create field
@@ -46,25 +48,24 @@ class NStateMachineEditor (Editor):
 			#listHasBeenModified = true
 		
 		
-		## element fields
-		#for listElement as NAbilityBase in targetElementList:
-		#	continue if listElement is null
-		#	
-		#	#EditorGUILayout.Separator()
-		#	resultElement = LayOutElement(listElement)
-		#	EditorGUILayout.Separator()
-		#	if resultElement is not listElement:
-		#		listHasBeenModified = true
-		#		listElement = resultElement
-		#
-		#
-		## clean up: destory objects that were marked to be removed
-		#if _elementsToRemove.Length != 0:
-		#	for removeElement as NAbilityBase in _elementsToRemove:
-		#		targetElementList.Remove(removeElement)
-		#		ScriptableObject.DestroyImmediate(removeElement) # to prevent leaks
-		#
-		#
+		# element fields
+		for stateNode as NStateMap.Node in target.map.nodes:
+			#EditorGUILayout.Separator()
+			resultElement = LayOutStateElement(stateNode.state)
+			EditorGUILayout.Separator()
+			if resultElement is not stateNode.state:
+				#listHasBeenModified = true
+				stateNode.state = resultElement
+		
+		
+		# clean up: destory objects that were marked to be removed
+		if _stateElementsToRemove.Length != 0:
+			for removeStateElement as NState in _stateElementsToRemove:
+				target.map.RemoveState(removeStateElement.name)
+			
+			_stateElementsToRemove = array(NState, 0)
+		
+		
 		#if listHasBeenModified:
 		#	if needsSort:
 		#		targetElementList.Sort(TypeNameSortComparer())
@@ -73,24 +74,24 @@ class NStateMachineEditor (Editor):
 		#	target.abilities = array(NAbilityBase, targetElementList)
 	
 	
-	#private def LayOutElement(element as NAbilityBase) as NAbilityBase:
-	#	EditorGUILayout.BeginHorizontal()
-	#	
-	#	EditorGUILayout.Foldout(true, ObjectNames.NicifyVariableName(element.abilityName))
-	#	#GUILayout.Label()
-	#	
-	#	destroyPressed as bool = GUILayout.Button('Destory', GUILayout.Width(60))
-	#	
-	#	EditorGUILayout.EndHorizontal()
-	#	
-	#	if destroyPressed:
-	#		_elementsToRemove += (element,)
-	#		return null
-	#	else:
-	#		element = LayOutElementFields(element)
-	#		return element
-	#
-	#
+	private def LayOutStateElement(element as NState) as NState:
+		EditorGUILayout.BeginHorizontal()
+		
+		EditorGUILayout.Foldout(true, element.name)
+		#GUILayout.Label(element.name)
+		
+		destroyPressed as bool = GUILayout.Button('Destory', GUILayout.Width(60))
+		
+		EditorGUILayout.EndHorizontal()
+		
+		if destroyPressed:
+			_stateElementsToRemove += (element,)
+			return null
+		else:
+			#element = LayOutElementFields(element)
+			return element
+	
+	
 	#private def LayOutElementFields(element as NAbilityBase) as NAbilityBase:
 	#	origValue as object
 	#	resultValue as object

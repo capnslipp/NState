@@ -13,7 +13,8 @@ import UnityEngine
 class NStateMachine (MonoBehaviour):
 	# map
 	
-	public map as NStateMap
+	# must be public to be serialized
+	public map as NStateMap = NStateMap()
 	
 	
 	# states/transitions
@@ -30,29 +31,36 @@ class NStateMachine (MonoBehaviour):
 	
 	# event socket/plug
 	
-	_eventSocket as NEventSocket
+	#_eventSocket as NEventSocket
 	
-	[Getter(eventPlug)]
-	_eventPlug as NEventPlug
+	#[Getter(eventPlug)]
+	#_eventPlug as NEventPlug
+	eventPlug as NEventPlug:
+		get:
+			return GetComponent(NEventPlug)
 	
 	
 	def Awake():
-		_eventSocket = GetComponent(NEventSocket)
-		assert _eventSocket is not null
-		
-		_eventPlug = GetComponent(NEventPlug)
-		assert _eventPlug is not null
-		_eventPlug.enabled = false
+		#_eventSocket = GetComponent(NEventSocket)
+		#assert _eventSocket is not null
+		#
+		#_eventPlug = GetComponent(NEventPlug)
+		#assert _eventPlug is not null
+		#_eventPlug.enabled = false
+		eventPlug.enabled = false
 	
+	# called on start-up, so we don't want to "reset" everything, we just want to init anything that's not inited
 	def Reset():
-		if map is not null:
-			ScriptableObject.DestroyImmediate(map)
-		
-		map = ScriptableObject.CreateInstance(typeof(NStateMap).Name)
+		pass
+		#if map is not null:
+		#	Debug.LogWarning("NStateMachine #${self.GetInstanceID()} Resetting, destroying NStateMap #${map.GetInstanceID()}")
+		#	ScriptableObject.DestroyImmediate(map)
+		#else:
+		#	Debug.LogWarning("NStateMachine #${self.GetInstanceID()} Resetting")
 	
 	def Start():
 		# make sure the NEventPlug wasn't re-enabled
-		assert not _eventPlug.enabled, "The NEventPlug will be updated by this NStateMachine, therefore it must be disabled to prevent normal Update() calls."
+		assert not eventPlug.enabled, "The NEventPlug will be updated by this NStateMachine, therefore it must be disabled to prevent normal Update() calls."
 		
 		# make sure the NEventPlug wasn't re-enabled
 		assert map is not null, "\"map\" was null; an instance of a NStateMap is required by this NStateMachine."
@@ -68,7 +76,7 @@ class NStateMachine (MonoBehaviour):
 	_activeEvents as (NEventBase) = null
 	
 	def Update():
-		_activeEvents = _eventSocket.Flush()
+		_activeEvents = GetComponent(NEventSocket).Flush()
 		
 		# loop through the transitions and ask each one if it's conditions have been met
 		for transition as NStateTransition in _currentStateTransitions:
@@ -78,13 +86,13 @@ class NStateMachine (MonoBehaviour):
 		
 		_activeEvents = null
 		
-		_eventPlug.SendEvents()
+		eventPlug.SendEvents()
 	
 	
 	
 	private def LoadState([Required(state is not null)] state as NState) as void:
 		_currentState = state
-		_currentStateTransitions = map.GetTransitionsForState(_currentState.name)
+		_currentStateTransitions = map.GetTransitions(_currentState.name)
 	
 	private def EnterCurrentState() as void:
 		if _currentState.entryAction is not null:

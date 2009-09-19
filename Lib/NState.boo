@@ -5,9 +5,11 @@
 
 import System
 #import System.Reflection
-import UnityEngine
+#import UnityEngine
 
 
-class NState (ScriptableObject):
+[Serializable]
+class NState:
+	public name as string
 	public entryAction as NEventAction
 	public exitAction as NEventAction
