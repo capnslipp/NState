@@ -302,8 +302,10 @@ class NStateMachineEditor (Editor):
 		EditorGUILayout.BeginHorizontal()
 		targetStateName as string
 		targetStateName = element.targetState.name if element.targetState is not null
-		if resultTargetStateName != targetStateName:
 		resultTargetStateName as string = StateWidget('Target State', targetStateName, true)
+		if String.IsNullOrEmpty(resultTargetStateName):
+			element.targetState = null
+		elif resultTargetStateName != targetStateName:
 			element.targetState = _map.GetState(resultTargetStateName)
 		EditorGUILayout.EndHorizontal()
 	
