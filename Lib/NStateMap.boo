@@ -5,7 +5,7 @@
 
 import System
 #import System.Reflection
-import UnityEngine
+#import UnityEngine
 
 
 [Serializable]
@@ -19,17 +19,16 @@ class NStateMap:
 	public nodes as (Node) = array(Node, 0)
 	
 	
+	stateCount as int:
+		get:
+			# there should be one and only one node for each state
+			return nodes.Length
+	
+	
 	
 	def HasState(stateName as string) as bool:
 		for node as Node in nodes:
 			if node.state.name == stateName:
-				return true
-		
-		return false
-	
-	private def HasState(state as NState) as bool:
-		for node as Node in nodes:
-			if node.state is state:
 				return true
 		
 		return false
@@ -44,67 +43,40 @@ class NStateMap:
 	
 	
 	def AddState(stateName as string) as NState:
+		assert not HasState(stateName)
+		
 		state = NState(name: stateName)
-		return AddState(state)
-	
-	private def AddState(state as NState) as NState:
-		assert not HasState(state.name)
 		nodes += (Node(state: state, transitions: array(NStateTransition, 0)),)
+		
 		return state
 	
 	
 	def RemoveState(stateName as string) as NState:
-		state as NState = GetState(stateName)
-		assert state is not null, "NState '${stateName}' couldn't be removed because it couldn't be found."
-		return RemoveState(state)
-	
-	private def RemoveState(state as NState) as NState:
-		assert HasState(state) # necessary?
-		
-		# find the state object that actually _is_ the state object passed in
-		nodeIndex as int = Array.FindIndex(
+		# find the state object that has the same name as stateName
+		stateNodeIndex as int = Array.FindIndex(
 			nodes,
-			{ n as Node | n.state is state }
+			{ n as Node | n.state.name == stateName }
 		)
-		assert nodeIndex >= 0, "NState '${state.name}' couldn't be removed because it couldn't be found."
+		assert stateNodeIndex >= 0, "NState '${stateName}' couldn't be removed because it couldn't be found."
+		
+		state as NState = nodes[stateNodeIndex].state
 		
 		# slice off everything before and everything after the element we want to remove and put that back as the new array
-		nodes = nodes[:nodeIndex] + nodes[(nodeIndex + 1):]
+		nodes = nodes[:stateNodeIndex] + nodes[(stateNodeIndex + 1):]
+		# the node we just sliced out should be garbage collected at this point
+		
 		return state
-	
-	
-	stateCount as int:
-		get:
-			# there should be one and only one node for each state
-			return nodes.Length
 	
 	
 	
 	def HasTransition(forStateName as string, transitionName as string) as bool:
-		assert HasState(forStateName)
 		node as Node = GetNode(forStateName)
-		
-		return HasTransition(node.state, transitionName)
-	
-	private def HasTransition(forState as NState, transitionName as string) as bool:
-		assert HasState(forState)
-		node as Node = GetNode(forState)
 		
 		for nodeTransition as NStateTransition in node.transitions:
 			if nodeTransition.name == transitionName:
 				return true
 		
 		return false
-	
-	#private def HasTransition(forState as NState, transition as NStateTransition) as bool:
-	#	assert HasState(forState)
-	#	node as Node = GetNode(forState)
-	#	
-	#	for nodeTransition as NStateTransition in node.transitions:
-	#		if nodeTransition is transition:
-	#			return true
-	#	
-	#	return false
 	
 	
 	def GetTransition(forStateName as string, transitionName as string) as NStateTransition:
@@ -114,56 +86,39 @@ class NStateMap:
 		
 		return null
 	
-	def GetTransition(node as Node, transitionName as string) as NStateTransition:
-		for transition as NStateTransition in node.transitions:
-			if transition.name == transitionName:
-				return transition
-		
-		return null
-	
 	def GetTransitions(forStateName as string) as (NStateTransition):
-		assert HasState(forStateName)
 		node as Node = GetNode(forStateName)
 		
 		return node.transitions
 	
 	
 	def AddTransition(forStateName as string, transitionName as string) as NStateTransition:
-		transition = ScriptableObject.CreateInstance('NStateTransition')
-		transition.name = transitionName
-		return AddTransition(forStateName, transition)
-	
-	private def AddTransition(forStateName as string, transition as NStateTransition) as NStateTransition:
-		assert HasState(forStateName)
+		assert not HasTransition(forStateName, transitionName)
+		
 		node as Node = GetNode(forStateName)
 		
-		assert not HasTransition(forStateName, transition.name)
+		transition = NStateTransition(name: transitionName)
 		node.transitions += (transition,)
 		
 		return transition
 	
 	
 	def RemoveTransition(forStateName as string, transitionName as string) as NStateTransition:
-		assert HasState(forStateName)
 		node as Node = GetNode(forStateName)
-		assert node is not null, "NStateTransition '${transitionName}' couldn't be removed because the NState '${forStateName}' couldn't be found."
 		
-		transition as NStateTransition = GetTransition(node, transitionName)
-		assert transition is not null, "NStateTransition '${transitionName}' couldn't be removed because it couldn't be found in NState '${forStateName}'."
-		return RemoveTransition(node, transition)
-	
-	def RemoveTransition(node as Node, transition as NStateTransition) as NStateTransition:
-		#assert HasTransition(node.state, transition) # necessary?
-		
-		# find the transition object that actually _is_ the transition object passed in
+		# find the transition object that has the same name as transitionName
 		transitionIndex as int = Array.FindIndex(
 			node.transitions,
-			{ t as NStateTransition | t is transition }
+			{ t as NStateTransition | t.name == transitionName }
 		)
-		assert transitionIndex >= 0, "NStateTransition '${transition.name}' couldn't be removed because it couldn't be found in NState '${node.state.name}'."
+		assert transitionIndex >= 0, "NStateTransition '${transitionName}' couldn't be removed because it couldn't be found in NState '${forStateName}'."
+		
+		transition as NStateTransition = node.transitions[transitionIndex]
 		
 		# slice off everything before and everything after the element we want to remove and put that back as the new array
 		node.transitions = node.transitions[:transitionIndex] + node.transitions[(transitionIndex + 1):]
+		# the transition we just sliced out should be garbage collected at this point
+		
 		return transition
 	
 	
@@ -173,11 +128,4 @@ class NStateMap:
 			if node.state.name == stateName:
 				return node
 		
-		return null
-	
-	private def GetNode(state as NState) as Node:
-		for node as Node in nodes:
-			if node.state is state:
-				return node
-		
-		return null
+		assert false, "NState '${stateName}' couldn't be found."
