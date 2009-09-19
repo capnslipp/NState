@@ -87,11 +87,11 @@ class NStateMachine (MonoBehaviour):
 		_currentStateTransitions = map.GetTransitions(_currentState.name)
 	
 	private def EnterCurrentState() as void:
-		if _currentState.entryAction is not null:
+		if _currentState.entryAction is not null and _currentState.entryAction.eventType.type is not null:
 			_currentState.entryAction.Send(gameObject)
 	
 	private def ExitCurrentState() as void:
-		if _currentState.exitAction is not null:
+		if _currentState.exitAction is not null and _currentState.exitAction.eventType.type is not null:
 			_currentState.exitAction.Send(gameObject)
 	
 	
