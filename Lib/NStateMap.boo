@@ -37,7 +37,7 @@ class NStateMap (ScriptableObject):
 	
 	def AddState(stateToAdd as NState) as NState:
 		assert not HasState(stateToAdd.name)
-		nodes += (Node(state: stateToAdd),)
+		nodes += (Node(state: stateToAdd, transitions: array(NStateTransition, 0)),)
 		return stateToAdd
 	
 	stateCount as int:
@@ -68,6 +68,7 @@ class NStateMap (ScriptableObject):
 		assert HasState(stateName)
 		node as Node = GetNodeForState(stateName)
 		
+		
 		return node.transitions
 	
 	def AddTransition(fromStateName as string, transitionNameToAdd as string) as NStateTransition:
@@ -79,7 +80,6 @@ class NStateMap (ScriptableObject):
 		assert HasState(fromStateName)
 		node as Node = GetNodeForState(fromStateName)
 		
-		node.transitions = array(NStateTransition, 0) if node.transitions is null
 		assert not HasTransitionForState(fromStateName, transitionToAdd.name)
 		node.transitions += (transitionToAdd,)
 		
