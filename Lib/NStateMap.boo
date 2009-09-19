@@ -40,6 +40,11 @@ class NStateMap (ScriptableObject):
 		nodes += (Node(state: stateToAdd),)
 		return stateToAdd
 	
+	stateCount as int:
+		get:
+			# there should be one and only one node for each state
+			return nodes.Length
+	
 	
 	
 	def HasTransitionForState(stateName as string, transitionName as string) as bool:

@@ -50,9 +50,10 @@ class NStateMachine (MonoBehaviour):
 		
 		# make sure the NEventPlug wasn't re-enabled
 		assert map is not null, "\"map\" was null; an instance of a NStateMap is required by this NStateMachine."
+		assert map.stateCount > 0, "There must be at least one State for the StateMap to be usable."
 		
 		state as NState = map.GetState(initialState)
-		assert state is not null, "Could not find state \"${initialState}\" in the state map."
+		assert state is not null, "Could not find initial state \"${initialState}\" in the state map."
 		LoadState(state)
 	
 	
