@@ -50,9 +50,10 @@ class NStateMachine (MonoBehaviour):
 	
 	# called on start-up, so we don't want to "reset" everything, we just want to init anything that's not inited
 	def Reset():
-		pass
+		_currentState = null
+		_currentStateTransitions = null
 	
-	def Start():
+	def OnEnable():
 		# make sure the NEventPlug wasn't re-enabled
 		assert not eventPlug.enabled, "The NEventPlug will be updated by this NStateMachine, therefore it must be disabled to prevent normal Update() calls."
 		
@@ -117,4 +118,5 @@ class NStateMachine (MonoBehaviour):
 		else:
 			# turn off the state machine; it's over!
 			enabled = false
+			Reset()
 			Debug.Log("NStateMachine #${self.GetInstanceID()} ending", self) if debugOutput
