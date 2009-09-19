@@ -188,7 +188,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Entry Action', kLabelStyle)
-		NEditorGUILayout.AutoField(element.entryAction)
+		element.entryAction = NEditorGUILayout.EventActionField(element.entryAction)
 		EditorGUILayout.EndHorizontal()
 		
 		
@@ -196,7 +196,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Exit Action', kLabelStyle)
-		NEditorGUILayout.AutoField(element.exitAction)
+		element.exitAction = NEditorGUILayout.EventActionField(element.exitAction)
 		EditorGUILayout.EndHorizontal()
 	
 	
@@ -272,7 +272,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Condition', kLabelStyle)
-		NEditorGUILayout.AutoField(element.condition)
+		NEditorGUILayout.AutoField(element.condition, NConditionBase)
 		EditorGUILayout.EndHorizontal()
 		
 		
@@ -291,7 +291,7 @@ class NStateMachineEditor (Editor):
 		
 		EditorGUILayout.BeginHorizontal()
 		GUILayout.Label('Action', kLabelStyle)
-		NEditorGUILayout.AutoField(element.action)
+		element.action = NEditorGUILayout.EventActionField(element.action)
 		EditorGUILayout.EndHorizontal()
 	
 	
