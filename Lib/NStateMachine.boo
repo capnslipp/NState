@@ -71,6 +71,7 @@ class NStateMachine (MonoBehaviour):
 		
 		# loop through the transitions and ask each one if it's conditions have been met
 		for transition as NStateTransition in _currentStateTransitions:
+			assert transition.condition is not null, "Invalid condition for NStateTransition '${transition.name}' (for NState '${_currentState.name}')."
 			if transition.condition.IsMet(self):
 				DoTransition(transition)
 				break
