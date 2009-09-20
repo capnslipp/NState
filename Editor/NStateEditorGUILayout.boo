@@ -21,7 +21,7 @@ class NStateEditorGUILayout:
 		conditionType as Type = null
 		conditionType = element.GetType() if element is not null
 		
-		resultConditionType as Type = NEventEditorGUILayout.DerivedTypeField(conditionType, NConditionBase)
+		resultConditionType as Type = NEventEditorGUILayout.DerivedTypeField(conditionType, NConditionBase, null)
 		
 		
 		if resultConditionType is null:
