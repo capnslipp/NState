@@ -15,4 +15,7 @@ class NCallbackCondition (NConditionBase):
 	
 	
 	def IsMet(stateMachine as NStateMachine) as bool:
-		return callback(stateMachine)
+		if callback is null:
+			return false
+		else:
+			return callback(stateMachine)
