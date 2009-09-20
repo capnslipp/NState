@@ -3,19 +3,23 @@
 ## @purpose	Provides …
 
 
-import System
-#import System.Reflection
-#import UnityEngine
+#import System
+##import System.Reflection
+##import UnityEngine
+#
+#
+#class NCallbackCondition (NConditionBase):
+#	callable ConditionCallable(stateMachine as NStateMachine) as bool
+#	
+#	public callback as ConditionCallable
+#	
+#	
+#	def IsMet(stateMachine as NStateMachine) as bool:
+#		if callback is null:
+#			return false
+#		else:
+#			return callback(stateMachine)
 
-
-class NCallbackCondition (NConditionBase):
-	callable ConditionCallable(stateMachine as NStateMachine) as bool
-	
-	public callback as ConditionCallable
-	
-	
-	def IsMet(stateMachine as NStateMachine) as bool:
-		if callback is null:
-			return false
-		else:
-			return callback(stateMachine)
+class NCallbackCondition:
+	def contructor():
+		assert false, "NCallbackCondition is currently out-of-order"
