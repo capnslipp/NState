@@ -1,6 +1,6 @@
 h1. NState
 
-NState is a finite state machine system for the Unity Game Engine, developed by Slippy Douglas for Nectar Games. More info at "nectargames.com/2009/09/09/quest-for-an-event-driven-fsm-and-messaging-system-in-unity-day-one":http://nectargames.com/2009/09/09/quest-for-an-event-driven-fsm-and-messaging-system-in-unity-day-one .
+NState is a finite state machine system for the Unity Game Engine, developed by Slipp D. for Nectar Games. More info at "nectargames.com/2009/09/09/quest-for-an-event-driven-fsm-and-messaging-system-in-unity-day-one":http://nectargames.slippyd.com/2009/09/09/quest-for-an-event-driven-fsm-and-messaging-system-in-unity-day-one .
 
 NState is far from what I'd call a "1.0" release, but it is usable to an extent. The next major thing that needs to be done is a full write-up of how to use it and, preferably, a demo project.
 
@@ -12,8 +12,8 @@ h2. Notes
 
 h3. Dependencies
 
-* NState relies on NEvent ("github.com/slippyd/unity3d-NEvent":http://github.com/slippyd/unity3d-NEvent).
-* NState optionally uses UUnit ("github.com/slippyd/unity3d-UUnit":http://github.com/slippyd/unity3d-UUnit). To remove this dependency, locally delete the "Test" folder.
+* NState relies on NEvent ("github.com/capnslipp/NEvent":http://github.com/capnslipp/NEvent).
+* NState optionally uses UUnit ("github.com/capnslipp/UUnit":http://github.com/capnslipp/UUnit). To remove this dependency, locally delete the "Test" folder.
 
 
 h3. Incompatibilities
@@ -28,7 +28,7 @@ h3. Direct Download (without Git)
 
 Use this if you just want to check the library, with no risks.
 
-# Go to the GitHub page for this project (likely "github.com/slippyd/unity3d-NState":http://github.com/slippyd/unity3d-NState).
+# Go to the GitHub page for this project (likely "github.com/capnslipp/NState":http://github.com/capnslipp/NState).
 # Click the *Download* button and choose a format (ZIP is a safe bet).
 # Wait for the download and then uncompress it (if it doesn't automatically).
 # Rename the resulting folder to just *NState*.
@@ -47,7 +47,7 @@ Use this if your Unity project is not a Git repository (i.e. if you're using SVN
 
 To get it:
 # @cd@ into the *Assets/Libs* directory of your project (or any other subdirectory of *Assets*).
-# Run a: <code>git://github.com/slippyd/unity3d-NState.git NState</code>
+# Run a: <code>git://github.com/capnslipp/NState.git NState</code>
 
 Later on, to update to latest:
 # @cd@ into the *NState* directory again.
@@ -60,7 +60,7 @@ h3. Tracking Latest (via Git Submodule)
 To get it:
 # @cd@ into the root directory of your project.
 # Run the following (make sure the *Libs* directory exists beforehand):
-	<pre>git submodule add git://github.com/slippyd/unity3d-NState.git Assets/Libs/NState
+	<pre>git submodule add git://github.com/capnslipp/NState.git Assets/Libs/NState
 git submodule init
 git submodule update</pre>
 
